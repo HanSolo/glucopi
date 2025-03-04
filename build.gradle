@@ -52,7 +52,7 @@ ext {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: '*.jar')
+    //implementation fileTree(dir: 'libs', include: '*.jar')
     implementation 'eu.hansolo:medusa:21.0.9'
     implementation 'eu.hansolo:jdktools:21.0.17'
     implementation 'eu.hansolo:toolbox:21.0.17'

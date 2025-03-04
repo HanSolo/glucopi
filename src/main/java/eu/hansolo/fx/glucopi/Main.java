@@ -3,7 +3,6 @@ package eu.hansolo.fx.glucopi;
 import eu.hansolo.fx.glucopi.Constants.Glucose;
 import eu.hansolo.fx.glucopi.Constants.Trend;
 import eu.hansolo.medusa.Clock;
-import eu.hansolo.medusa.Clock.ClockSkinType;
 import eu.hansolo.medusa.ClockBuilder;
 import eu.hansolo.nightscoutconnector.Connector;
 import eu.hansolo.nightscoutconnector.Entry;
@@ -13,10 +12,15 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
@@ -51,6 +55,7 @@ public class Main extends Application {
                                  .titleColor(Constants.DAY_FOREGROUND)
                                  .text("")
                                  .textVisible(true)
+                                 .textColor(Constants.DAY_FOREGROUND)
                                  .running(true)
                                  .build();
 
@@ -58,6 +63,7 @@ public class Main extends Application {
         this.clock.setSkin(clockSkin);
 
         this.pane = new StackPane(this.clock);
+        this.pane.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
 
         this.lastBlinkCalled = System.nanoTime();
         this.lastTimerCalled = System.nanoTime() - 60_000_000_001l;
@@ -83,16 +89,18 @@ public class Main extends Application {
                         }
                     } else {
                         if (isNight.get()) {
-                            clock.setBackgroundPaint(Constants.RED);
+                            //clock.setBackgroundPaint(Constants.RED);
                             clock.setTextColor(Constants.NIGHT_BACKGROUND);
                             clock.setHourColor(Constants.NIGHT_FOREGROUND);
                             clock.setMinuteColor(Constants.NIGHT_FOREGROUND);
                             clock.setSecondColor(Constants.NIGHT_FOREGROUND);
+                            clockSkin.setNight(true);
                         } else {
                             clock.setBackgroundPaint(Constants.DAY_BACKGROUND);
                             clock.setHourColor(Constants.DAY_FOREGROUND);
                             clock.setMinuteColor(Constants.DAY_FOREGROUND);
                             clock.setSecondColor(Constants.DAY_FOREGROUND);
+                            clockSkin.setNight(false);
                         }
                     }
                     blink ^= true;
@@ -131,6 +139,8 @@ public class Main extends Application {
 
             this.clock.setText(String.format("%.0f", value) + " " + trend.getSymbol());
             if (isNight.get()) {
+                this.clockSkin.setNight(true);
+                this.clock.setBackgroundPaint(Constants.NIGHT_BACKGROUND);
                 if (value > Glucose.TOO_HIGH.value || value < Glucose.TOO_LOW.value) {
                     this.clock.setTextColor(Constants.RED);
                 } else {
@@ -138,25 +148,25 @@ public class Main extends Application {
                 }
             } else {
                 if (value > Glucose.TOO_HIGH.value) {
-                    this.clock.setTextColor(Glucose.TOO_HIGH.color);
+                    this.clock.setBackgroundPaint(Glucose.TOO_HIGH.color);
                     this.isBlinking.set(true);
                 } else if (value > Glucose.ACCEPTABLE_HIGH.value) {
-                    this.clock.setTextColor(Glucose.ACCEPTABLE_HIGH.color);
+                    this.clock.setBackgroundPaint(Glucose.ACCEPTABLE_HIGH.color);
                     this.isBlinking.set(false);
                 } else if (value > Glucose.HIGH.value) {
-                    this.clock.setTextColor(Glucose.HIGH.color);
+                    this.clock.setBackgroundPaint(Glucose.HIGH.color);
                     this.isBlinking.set(false);
                 } else if (value > Glucose.LOW.value) {
-                    this.clock.setTextColor(Constants.GREEN);
+                    this.clock.setBackgroundPaint(Constants.GREEN);
                     this.isBlinking.set(false);
                 } else if (value < Glucose.TOO_LOW.value) {
-                    this.clock.setTextColor(Glucose.TOO_LOW.color);
+                    this.clock.setBackgroundPaint(Glucose.TOO_LOW.color);
                     this.isBlinking.set(true);
                 } else if (value < Glucose.ACCEPTABLE_LOW.value) {
-                    this.clock.setTextColor(Glucose.ACCEPTABLE_LOW.color);
+                    this.clock.setBackgroundPaint(Glucose.ACCEPTABLE_LOW.color);
                     this.isBlinking.set(true);
                 } else if (value < Glucose.LOW.value) {
-                    this.clock.setTextColor(Glucose.LOW.color);
+                    this.clock.setBackgroundPaint(Glucose.LOW.color);
                     this.isBlinking.set(false);
                 }
                 this.clockSkin.setSubText((delta > 0 ? "+" : "") + String.format("%.0f", delta));
@@ -167,41 +177,77 @@ public class Main extends Application {
         this.isBlinking.addListener(o -> {
             if (!isBlinking.get()) {
                 if (isNight.get()) {
+                    this.clockSkin.setNight(true);
                     this.clock.setBackgroundPaint(Constants.NIGHT_BACKGROUND);
                     this.clock.setHourColor(Constants.NIGHT_FOREGROUND);
                     this.clock.setMinuteColor(Constants.NIGHT_FOREGROUND);
-                    this.clock.setKnobColor(Constants.NIGHT_FOREGROUND);
                     this.clock.setTextColor(Constants.NIGHT_FOREGROUND);
                 } else {
-                    this.clock.setBackgroundPaint(Constants.DAY_BACKGROUND);
+                    final double value = this.currentEntry.getValue().sgv();
+                    if (value > Glucose.TOO_HIGH.value) {
+                        this.clock.setBackgroundPaint(Glucose.TOO_HIGH.color);
+                    } else if (value > Glucose.ACCEPTABLE_HIGH.value) {
+                        this.clock.setBackgroundPaint(Glucose.ACCEPTABLE_HIGH.color);
+                    } else if (value > Glucose.HIGH.value) {
+                        this.clock.setBackgroundPaint(Glucose.HIGH.color);
+                    } else if (value > Glucose.LOW.value) {
+                        this.clock.setBackgroundPaint(Constants.GREEN);
+                    } else if (value < Glucose.TOO_LOW.value) {
+                        this.clock.setBackgroundPaint(Glucose.TOO_LOW.color);
+                    } else if (value < Glucose.ACCEPTABLE_LOW.value) {
+                        this.clock.setBackgroundPaint(Glucose.ACCEPTABLE_LOW.color);
+                    } else if (value < Glucose.LOW.value) {
+                        this.clock.setBackgroundPaint(Glucose.LOW.color);
+                    }
                     this.clock.setHourColor(Constants.DAY_FOREGROUND);
                     this.clock.setMinuteColor(Constants.DAY_FOREGROUND);
-                    this.clock.setKnobColor(Constants.DAY_FOREGROUND);
+                    this.clock.setTextColor(Constants.DAY_FOREGROUND);
+                    this.clockSkin.setNight(false);
                 }
             }
         });
 
         this.isNight.addListener((o, ov, nv) -> {
            if (nv) {
+               this.clockSkin.setNight(true);
                this.clock.setBackgroundPaint(Constants.NIGHT_BACKGROUND);
                this.clock.setHourColor(Constants.NIGHT_FOREGROUND);
                this.clock.setMinuteColor(Constants.NIGHT_FOREGROUND);
-               this.clock.setKnobColor(Constants.NIGHT_FOREGROUND);
+               this.clock.setSecondColor(Constants.NIGHT_FOREGROUND);
+               this.clock.setTextColor(Constants.NIGHT_FOREGROUND);
            } else {
-               this.clock.setBackgroundPaint(Constants.DAY_BACKGROUND);
+               final double value = this.currentEntry.getValue().sgv();
+               if (value > Glucose.TOO_HIGH.value) {
+                   this.clock.setBackgroundPaint(Glucose.TOO_HIGH.color);
+               } else if (value > Glucose.ACCEPTABLE_HIGH.value) {
+                   this.clock.setBackgroundPaint(Glucose.ACCEPTABLE_HIGH.color);
+               } else if (value > Glucose.HIGH.value) {
+                   this.clock.setBackgroundPaint(Glucose.HIGH.color);
+               } else if (value > Glucose.LOW.value) {
+                   this.clock.setBackgroundPaint(Constants.GREEN);
+               } else if (value < Glucose.TOO_LOW.value) {
+                   this.clock.setBackgroundPaint(Glucose.TOO_LOW.color);
+               } else if (value < Glucose.ACCEPTABLE_LOW.value) {
+                   this.clock.setBackgroundPaint(Glucose.ACCEPTABLE_LOW.color);
+               } else if (value < Glucose.LOW.value) {
+                   this.clock.setBackgroundPaint(Glucose.LOW.color);
+               }
                this.clock.setHourColor(Constants.DAY_FOREGROUND);
                this.clock.setMinuteColor(Constants.DAY_FOREGROUND);
-               this.clock.setKnobColor(Constants.DAY_FOREGROUND);
+               this.clock.setSecondColor(Constants.DAY_FOREGROUND);
+               this.clock.setTextColor(Constants.DAY_FOREGROUND);
+               this.clockSkin.setNight(false);
            }
         });
     }
 
     @Override public void start(final Stage stage) throws Exception {
         Scene scene = new Scene(pane, 480, 480);
+        scene.setFill(Color.TRANSPARENT);
 
         stage.setScene(scene);
         stage.setTitle("GlucoPi");
-        //stage.initStyle(StageStyle.TRANSPARENT);
+        stage.initStyle(StageStyle.TRANSPARENT);
         stage.show();
         stage.centerOnScreen();
 

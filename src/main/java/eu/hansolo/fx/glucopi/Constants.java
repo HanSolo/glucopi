@@ -12,11 +12,11 @@ public final class Constants {
     public static final int    NIGHT_STARTS_AT        = 20;
     public static final int    NIGHT_ENDS_AT          = 6;
 
-    public static final Color NIGHT_BACKGROUND        = Color.rgb(128, 0, 0);
-    public static final Color NIGHT_FOREGROUND        = Color.rgb(200, 0, 0);
+    public static final Color NIGHT_BACKGROUND        = Color.BLACK; //Color.rgb(128, 0, 0);
+    public static final Color NIGHT_FOREGROUND        = Color.rgb(128, 0, 0);
     public static final Color NIGHT_BRIGHT_FOREGROUND = Color.rgb(255, 0, 0);
-    public static final Color DAY_BACKGROUND          = Color.rgb(40, 40, 40);
-    public static final Color DAY_FOREGROUND          = Color.rgb(200, 200, 200);
+    public static final Color DAY_BACKGROUND          = Color.rgb(200, 200, 200);
+    public static final Color DAY_FOREGROUND          = Color.WHITE;
 
     public static final Color RED                     = Color.color(0.996, 0.000, 0.000); // RGB 254,   0, 0
     public static final Color ORANGE                  = Color.color(1.000, 0.365, 0.004); // RGB 255,  93, 0

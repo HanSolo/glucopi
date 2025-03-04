@@ -44,26 +44,27 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
     private              GraphicsContext   minutesCtx;
     private              Canvas            secondsCanvas;
     private              GraphicsContext   secondsCtx;
+    private              Color             backgroundColor;
     private              Color             hourColor;
     private              Color             minuteColor;
     private              Color             fiveMinuteColor;
     private              Color             secondColor;
-    private              Color             titleColor;
     private              Color             textColor;
-    private              Color             subTextColor;
     private              String            subText;
+    private              boolean           isNight;
 
 
     // ******************** Constructors **************************************
     public GlucoPiDigitalSkin(Clock clock) {
         super(clock);
+        backgroundColor = (Color) clock.getBackgroundPaint();
         hourColor       = clock.getHourColor();
         minuteColor     = clock.getMinuteColor();
         fiveMinuteColor = minuteColor.darker();
         secondColor     = clock.getSecondColor();
-        titleColor      = clock.getTitleColor();
         textColor       = clock.getTextColor();
         subText         = "";
+        isNight         = false;
 
         initGraphics();
         registerListeners();
@@ -106,6 +107,7 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
 
     @Override protected void registerListeners() {
         super.registerListeners();
+        getSkinnable().backgroundPaintProperty().addListener(o -> drawBackground());
     }
 
 
@@ -124,6 +126,8 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
         drawForeground(ZonedDateTime.now());
     }
 
+    public void setNight(final boolean isNight) { this.isNight = isNight; }
+
     // ******************** Canvas ********************************************
     private void drawForeground(final ZonedDateTime TIME) {
         foregroundCtx.clearRect(0, 0, size, size);
@@ -140,11 +144,11 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
 
             // Draw delta
             foregroundCtx.setFont(Fonts.sfProRoundedRegular(size * 0.1));
-            foregroundCtx.fillText(this.subText, center, center + size * 0.2);
+            foregroundCtx.fillText(this.subText, center, center + size * 0.15);
 
             // Draw outdated
             if (clock.isTitleVisible()) {
-                foregroundCtx.fillText(clock.getTitle(), center, center - size * 0.2);
+                foregroundCtx.fillText(clock.getTitle(), center, center - size * 0.15);
             }
         }
     }
@@ -213,10 +217,16 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
     }
 
     private void drawBackground() {
+        final double hueShift         = 0.0;
+        final double saturationFactor = 0.85;
+        final double brightnessFactor = 1.0;
+        final double opacityFactor    = 1.0;
+        final Color  darker           = this.backgroundColor.deriveColor(hueShift, saturationFactor, brightnessFactor, opacityFactor);
+
         double strokeWidth = size * 0.06;
         backgroundCtx.setLineCap(StrokeLineCap.BUTT);
         backgroundCtx.clearRect(0, 0, size, size);
-        final Color backgroundColor = Color.color(0.2, 0.2, 0.2, 1.0);
+        final Color backgroundColor = this.isNight ? Color.color(0.1, 0.1, 0.1, 1.0) : darker;
         backgroundCtx.setStroke(backgroundColor);
         backgroundCtx.setLineWidth(strokeWidth);
 
@@ -309,14 +319,20 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
         pane.setBackground(new Background(new BackgroundFill(clock.getBackgroundPaint(), new CornerRadii(1024), Insets.EMPTY)));
         ZonedDateTime time = clock.getTime();
 
-        hourColor       = clock.getHourColor();
-        minuteColor     = clock.getMinuteColor();
-        fiveMinuteColor = minuteColor.darker();
-        secondColor     = clock.getSecondColor();
-        titleColor      = clock.getTitleColor();
+        backgroundColor = (Color) clock.getBackgroundPaint();
+
+        final double hueShift         = 0.0;
+        final double saturationFactor = 0.5;
+        final double brightnessFactor = 1.0;
+        final double opacityFactor    = 1.0;
+        final Color  brighter         = backgroundColor.deriveColor(hueShift, saturationFactor, brightnessFactor, opacityFactor);
+
+        hourColor       = isNight ? clock.getHourColor()              : brighter;
+        minuteColor     = isNight ? clock.getMinuteColor()            : brighter;
+        fiveMinuteColor = isNight ? clock.getMinuteColor().brighter() : brighter.brighter();
+        secondColor     = isNight ? clock.getSecondColor()            : brighter;
         textColor       = clock.getTextColor();
 
-        //drawBackground();
         drawForeground(time);
         drawHours(time);
         drawMinutes(time);
