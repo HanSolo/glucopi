@@ -96,10 +96,22 @@ public class Main extends Application {
                             clock.setSecondColor(Constants.NIGHT_FOREGROUND);
                             clockSkin.setNight(true);
                         } else {
-                            clock.setBackgroundPaint(Constants.DAY_BACKGROUND);
-                            clock.setHourColor(Constants.DAY_FOREGROUND);
-                            clock.setMinuteColor(Constants.DAY_FOREGROUND);
-                            clock.setSecondColor(Constants.DAY_FOREGROUND);
+                            final double value = currentEntry.getValue().sgv();
+                            if (value > Glucose.TOO_HIGH.value) {
+                                clock.setBackgroundPaint(Glucose.TOO_HIGH.color);
+                            } else if (value > Glucose.ACCEPTABLE_HIGH.value) {
+                                clock.setBackgroundPaint(Glucose.ACCEPTABLE_HIGH.color);
+                            } else if (value > Glucose.HIGH.value) {
+                                clock.setBackgroundPaint(Glucose.HIGH.color);
+                            } else if (value > Glucose.LOW.value) {
+                                clock.setBackgroundPaint(Constants.GREEN);
+                            } else if (value < Glucose.TOO_LOW.value) {
+                                clock.setBackgroundPaint(Glucose.TOO_LOW.color);
+                            } else if (value < Glucose.ACCEPTABLE_LOW.value) {
+                                clock.setBackgroundPaint(Glucose.ACCEPTABLE_LOW.color);
+                            } else if (value < Glucose.LOW.value) {
+                                clock.setBackgroundPaint(Glucose.LOW.color);
+                            }
                             clockSkin.setNight(false);
                         }
                     }
