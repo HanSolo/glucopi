@@ -323,7 +323,7 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
 
         final double hueShift         = 0.0;
         final double saturationFactor = 0.5;
-        final double brightnessFactor = 1.0;
+        final double brightnessFactor = 1.2;
         final double opacityFactor    = 1.0;
         final Color  brighter         = backgroundColor.deriveColor(hueShift, saturationFactor, brightnessFactor, opacityFactor);
 
