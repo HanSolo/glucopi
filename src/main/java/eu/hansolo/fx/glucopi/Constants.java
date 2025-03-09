@@ -2,27 +2,30 @@ package eu.hansolo.fx.glucopi;
 
 import javafx.scene.paint.Color;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Optional;
 
 
 public final class Constants {
-    public static final String NIGHTSCOUT_URL         = "https://glucose-anton.herokuapp.com";
+    public static final String            NIGHTSCOUT_URL          = "https://glucose-anton.herokuapp.com";
+    public static final int               NIGHT_STARTS_AT         = 20;
+    public static final int               NIGHT_ENDS_AT           = 6;
 
-    public static final int    NIGHT_STARTS_AT        = 20;
-    public static final int    NIGHT_ENDS_AT          = 6;
+    public static final Color             NIGHT_BACKGROUND        = Color.BLACK; //Color.rgb(128, 0, 0);
+    public static final Color             NIGHT_FOREGROUND        = Color.rgb(128, 0, 0);
+    public static final Color             NIGHT_BRIGHT_FOREGROUND = Color.rgb(255, 0, 0);
+    public static final Color             DAY_BACKGROUND          = Color.rgb(200, 200, 200);
+    public static final Color             DAY_FOREGROUND          = Color.WHITE;
 
-    public static final Color NIGHT_BACKGROUND        = Color.BLACK; //Color.rgb(128, 0, 0);
-    public static final Color NIGHT_FOREGROUND        = Color.rgb(128, 0, 0);
-    public static final Color NIGHT_BRIGHT_FOREGROUND = Color.rgb(255, 0, 0);
-    public static final Color DAY_BACKGROUND          = Color.rgb(200, 200, 200);
-    public static final Color DAY_FOREGROUND          = Color.WHITE;
+    public static final DateTimeFormatter DATE_FORMATTER          = DateTimeFormatter.ofPattern("d.M.yy");
+    public static final DateTimeFormatter TIME_FORMATTER          = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    public static final Color RED                     = Color.color(0.996, 0.000, 0.000); // RGB 254,   0, 0
-    public static final Color ORANGE                  = Color.color(1.000, 0.365, 0.004); // RGB 255,  93, 0
-    public static final Color YELLOW                  = Color.color(1.000, 0.659, 0.000); // RGB 255, 168, 0
-    public static final Color GREEN                   = Color.color(0.000, 0.761, 0.004); //   0, 194, 1
-    public static final Color DARK_GREEN              = Color.color(0.00, 0.50, 0.13);
+    public static final Color             RED                     = Color.color(0.996, 0.000, 0.000); // RGB 254,   0, 0
+    public static final Color             ORANGE                  = Color.color(1.000, 0.365, 0.004); // RGB 255,  93, 0
+    public static final Color             YELLOW                  = Color.color(1.000, 0.659, 0.000); // RGB 255, 168, 0
+    public static final Color             GREEN                   = Color.color(0.000, 0.761, 0.004); //   0, 194, 1
+    public static final Color             DARK_GREEN              = Color.color(0.00, 0.50, 0.13);
 
     public enum Glucose {
         TOO_HIGH(250, RED),
@@ -86,5 +89,4 @@ public final class Constants {
             }
         }
     }
-
 }

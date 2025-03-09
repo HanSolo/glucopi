@@ -214,6 +214,14 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
             }
             secondsCtx.restore();
         }
+
+        // Draw digital time
+        secondsCtx.setTextAlign(TextAlignment.CENTER);
+        secondsCtx.setTextBaseline(VPos.CENTER);
+        secondsCtx.setFont(Fonts.sfProRoundedBold(size * 0.05));
+        secondsCtx.setFill(textColor);
+        secondsCtx.fillText(Constants.DATE_FORMATTER.format(TIME), center, center - size * 0.275);
+        secondsCtx.fillText(Constants.TIME_FORMATTER.format(TIME), center, center + size * 0.275);
     }
 
     private void drawBackground() {
@@ -317,15 +325,15 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
     @Override protected void redraw() {
         pane.setBorder(new Border(new BorderStroke(clock.getBorderPaint(), BorderStrokeStyle.SOLID, new CornerRadii(1024), new BorderWidths(clock.getBorderWidth() / PREFERRED_WIDTH * size))));
         pane.setBackground(new Background(new BackgroundFill(clock.getBackgroundPaint(), new CornerRadii(1024), Insets.EMPTY)));
-        ZonedDateTime time = clock.getTime();
 
         backgroundColor = (Color) clock.getBackgroundPaint();
 
-        final double hueShift         = 0.0;
-        final double saturationFactor = 0.5;
-        final double brightnessFactor = 1.2;
-        final double opacityFactor    = 1.0;
-        final Color  brighter         = backgroundColor.deriveColor(hueShift, saturationFactor, brightnessFactor, opacityFactor);
+        final ZonedDateTime time             = clock.getTime();
+        final double        hueShift         = 0.0;
+        final double        saturationFactor = 0.5;
+        final double        brightnessFactor = 1.2;
+        final double        opacityFactor    = 1.0;
+        final Color         brighter         = backgroundColor.deriveColor(hueShift, saturationFactor, brightnessFactor, opacityFactor);
 
         hourColor       = isNight ? clock.getHourColor()              : brighter;
         minuteColor     = isNight ? clock.getMinuteColor()            : brighter;
