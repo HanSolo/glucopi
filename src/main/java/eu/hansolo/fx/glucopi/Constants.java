@@ -18,7 +18,9 @@ public final class Constants {
     public static final Color             DAY_BACKGROUND          = Color.rgb(200, 200, 200);
     public static final Color             DAY_FOREGROUND          = Color.WHITE;
 
-    public static final DateTimeFormatter DATE_FORMATTER          = DateTimeFormatter.ofPattern("d.M.yy");
+    public static final double            DELTA_CHART_WIDTH       = 480 * 0.36;
+    public static final double            DELTA_CHART_HEIGHT      = DELTA_CHART_WIDTH * 0.25;
+
     public static final DateTimeFormatter TIME_FORMATTER          = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     public static final Color             RED                     = Color.color(0.996, 0.000, 0.000); // RGB 254,   0, 0

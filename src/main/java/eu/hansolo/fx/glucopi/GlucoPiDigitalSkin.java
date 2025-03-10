@@ -3,7 +3,6 @@ package eu.hansolo.fx.glucopi;
 import eu.hansolo.fx.glucopi.fonts.Fonts;
 import eu.hansolo.medusa.Clock;
 import eu.hansolo.medusa.skins.ClockSkinBase;
-import eu.hansolo.medusa.tools.Helper;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.canvas.Canvas;
@@ -26,8 +25,12 @@ import javafx.scene.text.TextAlignment;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+
+import static eu.hansolo.toolbox.unit.UnitDefinition.MILLIGRAM_PER_DECILITER;
 
 
 public class GlucoPiDigitalSkin extends ClockSkinBase {
@@ -52,6 +55,9 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
     private              Color             textColor;
     private              String            subText;
     private              boolean           isNight;
+    private              List<Double>      deltas;
+    private              double            deltaMin;
+    private              double            deltaMax;
 
 
     // ******************** Constructors **************************************
@@ -65,6 +71,9 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
         textColor       = clock.getTextColor();
         subText         = "";
         isNight         = false;
+        this.deltas     = new ArrayList<>();
+        this.deltaMin   = 401;
+        this.deltaMax   = 0;
 
         initGraphics();
         registerListeners();
@@ -128,6 +137,12 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
 
     public void setNight(final boolean isNight) { this.isNight = isNight; }
 
+    public void setDeltas(final List<Double> deltas, final double deltaMin, final double deltaMax) {
+        this.deltas   = deltas;
+        this.deltaMin = deltaMin;
+        this.deltaMax = deltaMax;
+    }
+
     // ******************** Canvas ********************************************
     private void drawForeground(final ZonedDateTime TIME) {
         foregroundCtx.clearRect(0, 0, size, size);
@@ -146,9 +161,33 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
             foregroundCtx.setFont(Fonts.sfProRoundedRegular(size * 0.1));
             foregroundCtx.fillText(this.subText, center, center + size * 0.15);
 
+            // Draw delta chart
+            foregroundCtx.setLineDashes();
+            foregroundCtx.setStroke(textColor);
+            foregroundCtx.setFont(Fonts.sfProRoundedRegular(size * 0.02));
+            foregroundCtx.setLineWidth(0.5);
+            double offsetX     = (480 - Constants.DELTA_CHART_WIDTH) * 0.5;
+            double factorY     = Constants.DELTA_CHART_HEIGHT / Math.max(Math.abs(deltaMax), Math.abs(deltaMin));
+            double boxWidth    = Constants.DELTA_CHART_WIDTH / 22;
+            double spacer      = boxWidth;
+            double zeroY       = center - size * 0.17;
+            double textOffsetY = size * 0.02;
+            if (this.deltas.size() > 0) {
+                for (int i = 0; i < 12; i++) {
+                    double delta     = this.deltas.get(i);
+                    double boxHeight = Math.abs(delta * factorY);
+                    foregroundCtx.strokeRect(offsetX + i * (boxWidth + spacer), delta > 0 ? zeroY - boxHeight : zeroY, boxWidth, boxHeight);
+                    if ((i + 1) % 2 == 0) {
+                        foregroundCtx.fillText((delta > 0 ? "+" : "") + String.format("%.0f", delta), offsetX + i * (boxWidth + spacer) + boxWidth * 0.5, delta > 0 ? zeroY - boxHeight - textOffsetY : zeroY + boxHeight + textOffsetY);
+                    }
+                }
+            }
+            foregroundCtx.strokeLine(offsetX, zeroY, offsetX + Constants.DELTA_CHART_WIDTH, zeroY);
+
             // Draw outdated
             if (clock.isTitleVisible()) {
-                foregroundCtx.fillText(clock.getTitle(), center, center - size * 0.15);
+                foregroundCtx.setFont(Fonts.sfProRoundedBold(size * 0.05));
+                foregroundCtx.fillText(clock.getTitle(), center, center - size * 0.275);
             }
         }
     }
@@ -220,7 +259,6 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
         secondsCtx.setTextBaseline(VPos.CENTER);
         secondsCtx.setFont(Fonts.sfProRoundedBold(size * 0.05));
         secondsCtx.setFill(textColor);
-        secondsCtx.fillText(Constants.DATE_FORMATTER.format(TIME), center, center - size * 0.275);
         secondsCtx.fillText(Constants.TIME_FORMATTER.format(TIME), center, center + size * 0.275);
     }
 

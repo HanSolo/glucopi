@@ -24,6 +24,12 @@ import javafx.stage.StageStyle;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+import static eu.hansolo.toolbox.unit.UnitDefinition.MILLIGRAM_PER_DECILITER;
+import static eu.hansolo.toolbox.unit.UnitDefinition.MILLIMOL_PER_LITER;
 
 
 public class Main extends Application {
@@ -38,6 +44,9 @@ public class Main extends Application {
     private AnimationTimer        timer;
     private boolean               blink;
     private Entry                 lastEntry;
+    private List<Double>          deltas;
+    private double                deltaMin;
+    private double                deltaMax;
 
 
     @Override public void init() {
@@ -124,6 +133,11 @@ public class Main extends Application {
         };
         this.blink     = false;
         this.lastEntry = null;
+        this.deltas    = new ArrayList<>();
+        this.deltaMin  = 401;
+        this.deltaMax  = 0;
+
+        getInitialValues();
 
         registerListeners();
     }
@@ -134,6 +148,12 @@ public class Main extends Application {
             final double value     = entry.sgv();
             final double delta     = this.lastEntry == null ? 0 : value - this.lastEntry.sgv();
             final long   deltaTime = lastEntry == null ? 0 : entry.datelong() - lastEntry.datelong();
+
+            if (this.deltas.size() == 12) { this.deltas.removeFirst(); }
+            this.deltas.add(delta);
+            this.deltaMin = deltas.stream().min(Comparator.naturalOrder()).get();
+            this.deltaMax = deltas.stream().max(Comparator.naturalOrder()).get();
+            this.clockSkin.setDeltas(this.deltas, this.deltaMin, this.deltaMax);
 
             this.clock.setTitleVisible(deltaTime > 600);
 
@@ -184,6 +204,8 @@ public class Main extends Application {
                 this.clockSkin.setSubText((delta > 0 ? "+" : "") + String.format("%.0f", delta));
             }
             this.lastEntry = entry;
+
+            this.clockSkin.redraw();
         });
 
         this.isBlinking.addListener(o -> {
@@ -271,6 +293,19 @@ public class Main extends Application {
         System.exit(0);
     }
 
+    private void getInitialValues() {
+        final List<Entry> entries = Connector.getLastNEntries(15, Constants.NIGHTSCOUT_URL, "", "");
+        if (entries.size() > 13) {
+            for (int i = 12; i > 0; i--) {
+                double delta;
+                delta = entries.get(i - 1).sgv() - entries.get(i).sgv();
+                this.deltas.add(delta);
+            }
+            this.deltaMin = deltas.stream().min(Comparator.naturalOrder()).get();
+            this.deltaMax = deltas.stream().max(Comparator.naturalOrder()).get();
+        }
+        this.clockSkin.setDeltas(this.deltas, this.deltaMin, this.deltaMax);
+    }
 
     public static void main(String[] args) {
         launch(args);
