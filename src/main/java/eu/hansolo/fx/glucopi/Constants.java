@@ -19,7 +19,7 @@ public final class Constants {
     public static final Color             DAY_FOREGROUND          = Color.WHITE;
 
     public static final double            DELTA_CHART_WIDTH       = 480 * 0.36;
-    public static final double            DELTA_CHART_HEIGHT      = DELTA_CHART_WIDTH * 0.25;
+    public static final double            DELTA_CHART_HEIGHT      = DELTA_CHART_WIDTH * 0.2;
 
     public static final DateTimeFormatter TIME_FORMATTER          = DateTimeFormatter.ofPattern("HH:mm:ss");
 
