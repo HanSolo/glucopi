@@ -143,6 +143,7 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
         this.deltaMax = deltaMax;
     }
 
+
     // ******************** Canvas ********************************************
     private void drawForeground(final ZonedDateTime TIME) {
         foregroundCtx.clearRect(0, 0, size, size);
@@ -176,7 +177,8 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
                 for (int i = 0; i < 12; i++) {
                     double delta     = this.deltas.get(i);
                     double boxHeight = Math.abs(delta * factorY);
-                    foregroundCtx.strokeRect(offsetX + i * (boxWidth + spacer), delta > 0 ? zeroY - boxHeight : zeroY, boxWidth, boxHeight);
+                    //foregroundCtx.strokeRect(offsetX + i * (boxWidth + spacer), delta > 0 ? zeroY - boxHeight : zeroY, boxWidth, boxHeight);
+                    foregroundCtx.fillRect(offsetX + i * (boxWidth + spacer), delta > 0 ? zeroY - boxHeight : zeroY, boxWidth, boxHeight);
                     if ((i + 1) % 2 == 0) {
                         foregroundCtx.fillText((delta > 0 ? "+" : "") + String.format("%.0f", delta), offsetX + i * (boxWidth + spacer) + boxWidth * 0.5, delta > 0 ? zeroY - boxHeight - textOffsetY : zeroY + boxHeight + textOffsetY);
                     }
@@ -361,10 +363,10 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
     }
 
     @Override protected void redraw() {
-        pane.setBorder(new Border(new BorderStroke(clock.getBorderPaint(), BorderStrokeStyle.SOLID, new CornerRadii(1024), new BorderWidths(clock.getBorderWidth() / PREFERRED_WIDTH * size))));
-        pane.setBackground(new Background(new BackgroundFill(clock.getBackgroundPaint(), new CornerRadii(1024), Insets.EMPTY)));
+        this.backgroundColor = (Color) clock.getBackgroundPaint();
 
-        backgroundColor = (Color) clock.getBackgroundPaint();
+        pane.setBorder(new Border(new BorderStroke(clock.getBorderPaint(), BorderStrokeStyle.SOLID, new CornerRadii(1024), new BorderWidths(clock.getBorderWidth() / PREFERRED_WIDTH * size))));
+        pane.setBackground(new Background(new BackgroundFill(backgroundColor, new CornerRadii(1024), Insets.EMPTY)));
 
         final ZonedDateTime time             = clock.getTime();
         final double        hueShift         = 0.0;
