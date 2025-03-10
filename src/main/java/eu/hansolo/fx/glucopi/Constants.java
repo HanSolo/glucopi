@@ -2,13 +2,14 @@ package eu.hansolo.fx.glucopi;
 
 import javafx.scene.paint.Color;
 
+import java.io.File;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Optional;
 
 
 public final class Constants {
-    public static final String            NIGHTSCOUT_URL          = "https://glucose-anton.herokuapp.com";
+    public static final String            HOME_FOLDER             = new StringBuilder(System.getProperty("user.home")).append(File.separator).toString();
     public static final int               NIGHT_STARTS_AT         = 20;
     public static final int               NIGHT_ENDS_AT           = 6;
 

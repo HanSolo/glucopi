@@ -33,6 +33,7 @@ import static eu.hansolo.toolbox.unit.UnitDefinition.MILLIMOL_PER_LITER;
 
 
 public class Main extends Application {
+    private Properties            properties;
     private Clock                 clock;
     private GlucoPiDigitalSkin    clockSkin;
     private StackPane             pane;
@@ -50,23 +51,24 @@ public class Main extends Application {
 
 
     @Override public void init() {
-        this.clock = ClockBuilder.create()
-                                 .areasVisible(false)
-                                 .minuteTickMarksVisible(false)
-                                 .backgroundPaint(Constants.DAY_BACKGROUND)
-                                 .knobColor(Constants.DAY_FOREGROUND)
-                                 .hourColor(Constants.DAY_FOREGROUND)
-                                 .minuteColor(Constants.DAY_FOREGROUND)
-                                 .secondColor(Constants.DAY_FOREGROUND)
-                                 .hourTickMarkColor(Constants.DAY_FOREGROUND)
-                                 .title("\u26A0")
-                                 .titleVisible(true)
-                                 .titleColor(Constants.DAY_FOREGROUND)
-                                 .text("")
-                                 .textVisible(true)
-                                 .textColor(Constants.DAY_FOREGROUND)
-                                 .running(true)
-                                 .build();
+        this.properties = Properties.INSTANCE;
+        this.clock      = ClockBuilder.create()
+                                      .areasVisible(false)
+                                      .minuteTickMarksVisible(false)
+                                      .backgroundPaint(Constants.DAY_BACKGROUND)
+                                      .knobColor(Constants.DAY_FOREGROUND)
+                                      .hourColor(Constants.DAY_FOREGROUND)
+                                      .minuteColor(Constants.DAY_FOREGROUND)
+                                      .secondColor(Constants.DAY_FOREGROUND)
+                                      .hourTickMarkColor(Constants.DAY_FOREGROUND)
+                                      .title("\u26A0")
+                                      .titleVisible(true)
+                                      .titleColor(Constants.DAY_FOREGROUND)
+                                      .text("")
+                                      .textVisible(true)
+                                      .textColor(Constants.DAY_FOREGROUND)
+                                      .running(true)
+                                      .build();
 
         clockSkin = new GlucoPiDigitalSkin(this.clock);
         this.clock.setSkin(clockSkin);
@@ -80,7 +82,7 @@ public class Main extends Application {
             @Override public void handle(final long now) {
                 if (now - lastTimerCalled > 60_000_000_000l) {
                     try {
-                        final Entry entry = Connector.getCurrentEntry(Constants.NIGHTSCOUT_URL, "", "");
+                        final Entry entry = Connector.getCurrentEntry(properties.getString(Properties.PROPERTY_NIGHTSCOUT_URL), "", "");
                         if (entry != null) {
                             currentEntry.set(entry);
                         }
@@ -294,7 +296,7 @@ public class Main extends Application {
     }
 
     private void getInitialValues() {
-        final List<Entry> entries = Connector.getLastNEntries(15, Constants.NIGHTSCOUT_URL, "", "");
+        final List<Entry> entries = Connector.getLastNEntries(15, properties.getString(Properties.PROPERTY_NIGHTSCOUT_URL), "", "");
         if (entries.size() > 13) {
             for (int i = 12; i > 0; i--) {
                 double delta;
