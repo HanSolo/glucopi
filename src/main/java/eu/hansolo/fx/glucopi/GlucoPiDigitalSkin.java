@@ -205,7 +205,7 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
             secondsCtx.save();
             if (i % 6 == 0) {
                 // draw seconds
-                if (secCounter <= TIME.getSecond() + 1) {
+                if (secCounter <= TIME.getSecond()) {
                     secondsCtx.setStroke(secondColor);
                     secondsCtx.setLineWidth(strokeWidth * 0.25);
                     secondsCtx.strokeArc(strokeWidth * 0.5 + strokeWidth * 1.8, strokeWidth * 0.5 + strokeWidth * 1.8, size - strokeWidth - strokeWidth * 3.6, size - strokeWidth - strokeWidth * 3.6, i + 1 - 6, 4, ArcType.OPEN);
