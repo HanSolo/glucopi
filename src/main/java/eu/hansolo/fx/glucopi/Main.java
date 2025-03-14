@@ -11,9 +11,12 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.BooleanPropertyBase;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -36,10 +39,12 @@ public class Main extends Application {
     private Properties            properties;
     private Clock                 clock;
     private GlucoPiDigitalSkin    clockSkin;
+    private StackPane             dimPane;
     private StackPane             pane;
     private ObjectProperty<Entry> currentEntry = new ObjectProperty<>();
     private BooleanProperty       isBlinking   = new SimpleBooleanProperty(false);
     private BooleanProperty       isNight      = new SimpleBooleanProperty(false);
+    private BooleanProperty       isDimmed;
     private long                  lastBlinkCalled;
     private long                  lastTimerCalled;
     private AnimationTimer        timer;
@@ -73,7 +78,10 @@ public class Main extends Application {
         clockSkin = new GlucoPiDigitalSkin(this.clock);
         this.clock.setSkin(clockSkin);
 
-        this.pane = new StackPane(this.clock);
+        this.dimPane = new StackPane();
+        dimPane.setBackground(Constants.TRANSPARENT_OVERLAY);
+
+        this.pane = new StackPane(this.clock, dimPane);
         this.pane.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
 
         this.lastBlinkCalled = System.nanoTime();
@@ -138,6 +146,14 @@ public class Main extends Application {
         this.deltas    = new ArrayList<>();
         this.deltaMin  = 401;
         this.deltaMax  = 0;
+
+        this.isDimmed  = new BooleanPropertyBase(false) {
+            @Override protected void invalidated() {
+                dimPane.setBackground(get() ? Constants.DIM_OVERLAY : Constants.TRANSPARENT_OVERLAY);
+            }
+            @Override public Object getBean() { return Main.this; }
+            @Override public String getName() { return "isDimmed"; }
+        };
 
         getInitialValues();
 
@@ -275,6 +291,8 @@ public class Main extends Application {
                this.clockSkin.setNight(false);
            }
         });
+
+        this.dimPane.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> this.isDimmed.set(!this.isDimmed.get()));
     }
 
     @Override public void start(final Stage stage) throws Exception {

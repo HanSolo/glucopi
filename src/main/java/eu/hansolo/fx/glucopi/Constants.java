@@ -1,5 +1,9 @@
 package eu.hansolo.fx.glucopi;
 
+import javafx.geometry.Insets;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 
 import java.io.File;
@@ -18,6 +22,9 @@ public final class Constants {
     public static final Color             NIGHT_BRIGHT_FOREGROUND = Color.rgb(255, 0, 0);
     public static final Color             DAY_BACKGROUND          = Color.rgb(200, 200, 200);
     public static final Color             DAY_FOREGROUND          = Color.WHITE;
+    public static final Color             DIM_BLACK               = Color.color(0.0, 0.0, 0.0, 0.5);
+    public static final Background        DIM_OVERLAY             = new Background(new BackgroundFill(DIM_BLACK, new CornerRadii(240), Insets.EMPTY));
+    public static final Background        TRANSPARENT_OVERLAY     = new Background(new BackgroundFill(Color.TRANSPARENT, new CornerRadii(240), Insets.EMPTY));
 
     public static final double            DELTA_CHART_WIDTH       = 480 * 0.36;
     public static final double            DELTA_CHART_HEIGHT      = DELTA_CHART_WIDTH * 0.2;
