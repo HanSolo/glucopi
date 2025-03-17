@@ -1,7 +1,7 @@
 #!/bin/bash
 
 JAVA_VERSION=21
-MAIN_JAR="glucopi-21.0.0.jar"
+MAIN_JAR="GlucoPi-21.0.0.jar"
 APP_VERSION=21.0.0
 
 echo "java home: $JAVA_HOME"
