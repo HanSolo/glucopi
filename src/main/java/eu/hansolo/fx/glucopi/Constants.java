@@ -38,19 +38,21 @@ public final class Constants {
     public static final Color             DARK_GREEN              = Color.color(0.00, 0.50, 0.13);
 
     public enum Glucose {
-        TOO_HIGH(250, RED),
-        ACCEPTABLE_HIGH(180, ORANGE),
-        HIGH(140, YELLOW),
-        LOW(70, YELLOW),
-        ACCEPTABLE_LOW(65, ORANGE),
-        TOO_LOW(55, RED);
+        TOO_HIGH(250, RED, RED.deriveColor(0.0, 1.0, 0.9, 1.0)),
+        ACCEPTABLE_HIGH(180, ORANGE, ORANGE.deriveColor(0.0, 1.0, 0.95, 1.0)),
+        HIGH(140, YELLOW, YELLOW.deriveColor(0.0, 1.0, 0.95, 1.0)),
+        LOW(70, YELLOW, YELLOW.deriveColor(0.0, 1.0, 0.95, 1.0)),
+        ACCEPTABLE_LOW(65, ORANGE, ORANGE.deriveColor(0.0, 1.0, 0.95, 1.0)),
+        TOO_LOW(55, RED, RED.deriveColor(0.0, 1.0, 0.9, 1.0));
 
         public final double value;
         public final Color color;
+        public final Color backgroundColor;
 
-        Glucose(final double value, final Color color) {
-            this.value = value;
-            this.color = color;
+        Glucose(final double value, final Color color, final Color backgroundColor) {
+            this.value           = value;
+            this.color           = color;
+            this.backgroundColor = backgroundColor;
         }
 
     }

@@ -103,6 +103,7 @@ public class Main extends Application {
                         clock.setHourColor(Color.TRANSPARENT);
                         clock.setMinuteColor(Color.TRANSPARENT);
                         clock.setSecondColor(Color.TRANSPARENT);
+                        ((GlucoPiDigitalSkin) clock.getSkin()).setTickBackgroundColor(Color.TRANSPARENT);
                         if (isNight.get()) {
                             clock.setTextColor(Constants.RED);
                         }
@@ -118,18 +119,25 @@ public class Main extends Application {
                             final double value = currentEntry.getValue().sgv();
                             if (value > Glucose.TOO_HIGH.value) {
                                 clock.setBackgroundPaint(Glucose.TOO_HIGH.color);
+                                ((GlucoPiDigitalSkin) clock.getSkin()).setTickBackgroundColor(Glucose.TOO_HIGH.backgroundColor);
                             } else if (value > Glucose.ACCEPTABLE_HIGH.value) {
                                 clock.setBackgroundPaint(Glucose.ACCEPTABLE_HIGH.color);
+                                ((GlucoPiDigitalSkin) clock.getSkin()).setTickBackgroundColor(Glucose.ACCEPTABLE_HIGH.backgroundColor);
                             } else if (value > Glucose.HIGH.value) {
                                 clock.setBackgroundPaint(Glucose.HIGH.color);
+                                ((GlucoPiDigitalSkin) clock.getSkin()).setTickBackgroundColor(Glucose.HIGH.backgroundColor);
                             } else if (value > Glucose.LOW.value) {
                                 clock.setBackgroundPaint(Constants.GREEN);
+                                ((GlucoPiDigitalSkin) clock.getSkin()).setTickBackgroundColor(Constants.GREEN.deriveColor(0.0, 1.0, 0.95, 1.0));
                             } else if (value < Glucose.TOO_LOW.value) {
                                 clock.setBackgroundPaint(Glucose.TOO_LOW.color);
+                                ((GlucoPiDigitalSkin) clock.getSkin()).setTickBackgroundColor(Glucose.TOO_LOW.backgroundColor);
                             } else if (value < Glucose.ACCEPTABLE_LOW.value) {
                                 clock.setBackgroundPaint(Glucose.ACCEPTABLE_LOW.color);
+                                ((GlucoPiDigitalSkin) clock.getSkin()).setTickBackgroundColor(Glucose.ACCEPTABLE_LOW.backgroundColor);
                             } else if (value < Glucose.LOW.value) {
                                 clock.setBackgroundPaint(Glucose.LOW.color);
+                                ((GlucoPiDigitalSkin) clock.getSkin()).setTickBackgroundColor(Glucose.LOW.backgroundColor);
                             }
                             clockSkin.setNight(false);
                         }
@@ -191,6 +199,7 @@ public class Main extends Application {
             if (isNight.get()) {
                 this.clockSkin.setNight(true);
                 this.clock.setBackgroundPaint(Constants.NIGHT_BACKGROUND);
+                ((GlucoPiDigitalSkin) this.clock.getSkin()).setTickBackgroundColor(Constants.NIGHT_BACKGROUND);
                 if (value > Glucose.TOO_HIGH.value || value < Glucose.TOO_LOW.value) {
                     this.clock.setTextColor(Constants.RED);
                 } else {
@@ -199,24 +208,30 @@ public class Main extends Application {
             } else {
                 if (value > Glucose.TOO_HIGH.value) {
                     this.clock.setBackgroundPaint(Glucose.TOO_HIGH.color);
+                    ((GlucoPiDigitalSkin) this.clock.getSkin()).setTickBackgroundColor(Glucose.TOO_HIGH.backgroundColor);
                     this.isBlinking.set(true);
                 } else if (value > Glucose.ACCEPTABLE_HIGH.value) {
                     this.clock.setBackgroundPaint(Glucose.ACCEPTABLE_HIGH.color);
                     this.isBlinking.set(false);
                 } else if (value > Glucose.HIGH.value) {
                     this.clock.setBackgroundPaint(Glucose.HIGH.color);
+                    ((GlucoPiDigitalSkin) this.clock.getSkin()).setTickBackgroundColor(Glucose.HIGH.backgroundColor);
                     this.isBlinking.set(false);
                 } else if (value > Glucose.LOW.value) {
                     this.clock.setBackgroundPaint(Constants.GREEN);
+                    ((GlucoPiDigitalSkin) this.clock.getSkin()).setTickBackgroundColor(Constants.GREEN.deriveColor(0.0, 1.0, 0.95, 1.0));
                     this.isBlinking.set(false);
                 } else if (value < Glucose.TOO_LOW.value) {
                     this.clock.setBackgroundPaint(Glucose.TOO_LOW.color);
+                    ((GlucoPiDigitalSkin) this.clock.getSkin()).setTickBackgroundColor(Glucose.TOO_LOW.backgroundColor);
                     this.isBlinking.set(true);
                 } else if (value < Glucose.ACCEPTABLE_LOW.value) {
                     this.clock.setBackgroundPaint(Glucose.ACCEPTABLE_LOW.color);
+                    ((GlucoPiDigitalSkin) this.clock.getSkin()).setTickBackgroundColor(Glucose.ACCEPTABLE_LOW.backgroundColor);
                     this.isBlinking.set(true);
                 } else if (value < Glucose.LOW.value) {
                     this.clock.setBackgroundPaint(Glucose.LOW.color);
+                    ((GlucoPiDigitalSkin) this.clock.getSkin()).setTickBackgroundColor(Glucose.LOW.backgroundColor);
                     this.isBlinking.set(false);
                 }
                 this.clockSkin.setSubText((delta > 0 ? "+" : "") + String.format("%.0f", delta));

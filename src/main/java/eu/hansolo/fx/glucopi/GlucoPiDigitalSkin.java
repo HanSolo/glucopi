@@ -47,6 +47,7 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
     private              GraphicsContext   minutesCtx;
     private              Canvas            secondsCanvas;
     private              GraphicsContext   secondsCtx;
+    private              Color             tickBackgroundColor;
     private              Color             backgroundColor;
     private              Color             hourColor;
     private              Color             minuteColor;
@@ -63,17 +64,18 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
     // ******************** Constructors **************************************
     public GlucoPiDigitalSkin(Clock clock) {
         super(clock);
-        backgroundColor = (Color) clock.getBackgroundPaint();
-        hourColor       = clock.getHourColor();
-        minuteColor     = clock.getMinuteColor();
-        fiveMinuteColor = minuteColor.darker();
-        secondColor     = clock.getSecondColor();
-        textColor       = clock.getTextColor();
-        subText         = "";
-        isNight         = false;
-        this.deltas     = new ArrayList<>();
-        this.deltaMin   = 401;
-        this.deltaMax   = 0;
+        tickBackgroundColor = (Color) clock.getBackgroundPaint();
+        backgroundColor     = (Color) clock.getBackgroundPaint();
+        hourColor           = clock.getHourColor();
+        minuteColor         = clock.getMinuteColor();
+        fiveMinuteColor     = minuteColor.darker();
+        secondColor         = clock.getSecondColor();
+        textColor           = clock.getTextColor();
+        subText             = "";
+        isNight             = false;
+        this.deltas         = new ArrayList<>();
+        this.deltaMin       = 401;
+        this.deltaMax       = 0;
 
         initGraphics();
         registerListeners();
@@ -136,6 +138,11 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
     }
 
     public void setNight(final boolean isNight) { this.isNight = isNight; }
+
+    public void setTickBackgroundColor(final Color tickBackgroundColor) {
+        this.tickBackgroundColor = tickBackgroundColor;
+        drawBackground();
+    }
 
     public void setDeltas(final List<Double> deltas, final double deltaMin, final double deltaMax) {
         this.deltas   = deltas;
@@ -274,7 +281,7 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
         double strokeWidth = size * 0.06;
         backgroundCtx.setLineCap(StrokeLineCap.BUTT);
         backgroundCtx.clearRect(0, 0, size, size);
-        final Color backgroundColor = this.isNight ? Color.color(0.1, 0.1, 0.1, 1.0) : darker;
+        final Color backgroundColor = this.isNight ? Color.color(0.1, 0.1, 0.1, 1.0) : this.tickBackgroundColor;//darker;
         backgroundCtx.setStroke(backgroundColor);
         backgroundCtx.setLineWidth(strokeWidth);
 
