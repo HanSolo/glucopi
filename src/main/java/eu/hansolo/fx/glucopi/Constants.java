@@ -17,6 +17,9 @@ public final class Constants {
     public static final int               NIGHT_STARTS_AT         = 20;
     public static final int               NIGHT_ENDS_AT           = 6;
 
+    public static final int               PING_INTERVAL_IN_SEC    = 5;
+    public static final String            TEST_CONNECTIVITY_URL   = "https://apple.com";
+
     public static final Color             NIGHT_BACKGROUND        = Color.BLACK; //Color.rgb(128, 0, 0);
     public static final Color             NIGHT_FOREGROUND        = Color.rgb(128, 0, 0);
     public static final Color             NIGHT_BRIGHT_FOREGROUND = Color.rgb(255, 0, 0);

@@ -36,23 +36,25 @@ import static eu.hansolo.toolbox.unit.UnitDefinition.MILLIMOL_PER_LITER;
 
 
 public class Main extends Application {
-    private Properties            properties;
-    private Clock                 clock;
-    private GlucoPiDigitalSkin    clockSkin;
-    private StackPane             dimPane;
-    private StackPane             pane;
-    private ObjectProperty<Entry> currentEntry = new ObjectProperty<>();
-    private BooleanProperty       isBlinking   = new SimpleBooleanProperty(false);
-    private BooleanProperty       isNight      = new SimpleBooleanProperty(false);
-    private BooleanProperty       isDimmed;
-    private long                  lastBlinkCalled;
-    private long                  lastTimerCalled;
-    private AnimationTimer        timer;
-    private boolean               blink;
-    private Entry                 lastEntry;
-    private List<Double>          deltas;
-    private double                deltaMin;
-    private double                deltaMax;
+    private static final NetworkMonitor        networkMonitor = NetworkMonitor.INSTANCE;
+    private              boolean               initialized    = false;
+    private              Properties            properties;
+    private              Clock                 clock;
+    private              GlucoPiDigitalSkin    clockSkin;
+    private              StackPane             dimPane;
+    private              StackPane             pane;
+    private              ObjectProperty<Entry> currentEntry   = new ObjectProperty<>();
+    private              BooleanProperty       isBlinking     = new SimpleBooleanProperty(false);
+    private              BooleanProperty       isNight        = new SimpleBooleanProperty(false);
+    private              BooleanProperty       isDimmed;
+    private              long                  lastBlinkCalled;
+    private              long                  lastTimerCalled;
+    private              AnimationTimer        timer;
+    private              boolean               blink;
+    private              Entry                 lastEntry;
+    private              List<Double>          deltas;
+    private              double                deltaMin;
+    private              double                deltaMax;
 
 
     @Override public void init() {
@@ -89,12 +91,15 @@ public class Main extends Application {
         this.timer = new AnimationTimer() {
             @Override public void handle(final long now) {
                 if (now - lastTimerCalled > 60_000_000_000l) {
-                    try {
-                        final Entry entry = Connector.getCurrentEntry(properties.getString(Properties.PROPERTY_NIGHTSCOUT_URL), "", "");
-                        if (entry != null) {
-                            currentEntry.set(entry);
-                        }
-                    } catch (AccessDeniedException ex) {}
+                    if (!initialized) { getInitialValues(); }
+                    if (networkMonitor.isOnline()) {
+                        try {
+                            final Entry entry = Connector.getCurrentEntry(properties.getString(Properties.PROPERTY_NIGHTSCOUT_URL), "", "");
+                            if (entry != null) {
+                                currentEntry.set(entry);
+                            }
+                        } catch (AccessDeniedException ex) { }
+                    }
                     lastTimerCalled = now;
                 }
                 if (isBlinking.get() && now - lastBlinkCalled > 1_000_000_000) {
@@ -163,7 +168,7 @@ public class Main extends Application {
             @Override public String getName() { return "isDimmed"; }
         };
 
-        getInitialValues();
+        if (networkMonitor.isOnline()) { getInitialValues(); }
 
         registerListeners();
     }
@@ -329,17 +334,20 @@ public class Main extends Application {
     }
 
     private void getInitialValues() {
-        final List<Entry> entries = Connector.getLastNEntries(15, properties.getString(Properties.PROPERTY_NIGHTSCOUT_URL), "", "");
-        if (entries.size() > 13) {
-            for (int i = 12; i > 0; i--) {
-                double delta;
-                delta = entries.get(i - 1).sgv() - entries.get(i).sgv();
-                this.deltas.add(delta);
+        if (networkMonitor.isOnline()) {
+            final List<Entry> entries = Connector.getLastNEntries(15, properties.getString(Properties.PROPERTY_NIGHTSCOUT_URL), "", "");
+            if (entries.size() > 13) {
+                for (int i = 12; i > 0; i--) {
+                    double delta;
+                    delta = entries.get(i - 1).sgv() - entries.get(i).sgv();
+                    this.deltas.add(delta);
+                }
+                this.deltaMin = deltas.stream().min(Comparator.naturalOrder()).get();
+                this.deltaMax = deltas.stream().max(Comparator.naturalOrder()).get();
             }
-            this.deltaMin = deltas.stream().min(Comparator.naturalOrder()).get();
-            this.deltaMax = deltas.stream().max(Comparator.naturalOrder()).get();
+            this.clockSkin.setDeltas(this.deltas, this.deltaMin, this.deltaMax);
+            this.initialized = true;
         }
-        this.clockSkin.setDeltas(this.deltas, this.deltaMin, this.deltaMax);
     }
 
     public static void main(String[] args) {

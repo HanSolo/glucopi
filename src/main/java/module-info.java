@@ -14,6 +14,7 @@ module eu.hansolo.fx.glucopi {
     requires transitive eu.hansolo.medusa;
     requires transitive eu.hansolo.nightscoutconnector;
     requires transitive eu.hansolo.jdktools;
+    requires java.net.http;
 
     exports eu.hansolo.fx.glucopi;
 }

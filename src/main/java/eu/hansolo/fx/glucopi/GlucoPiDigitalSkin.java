@@ -34,31 +34,32 @@ import static eu.hansolo.toolbox.unit.UnitDefinition.MILLIGRAM_PER_DECILITER;
 
 
 public class GlucoPiDigitalSkin extends ClockSkinBase {
-    private              double            size;
-    private              double            center;
-    private              Pane              pane;
-    private              Canvas            backgroundCanvas;
-    private              GraphicsContext   backgroundCtx;
-    private              Canvas            foregroundCanvas;
-    private              GraphicsContext   foregroundCtx;
-    private              Canvas            hoursCanvas;
-    private              GraphicsContext   hoursCtx;
-    private              Canvas            minutesCanvas;
-    private              GraphicsContext   minutesCtx;
-    private              Canvas            secondsCanvas;
-    private              GraphicsContext   secondsCtx;
-    private              Color             tickBackgroundColor;
-    private              Color             backgroundColor;
-    private              Color             hourColor;
-    private              Color             minuteColor;
-    private              Color             fiveMinuteColor;
-    private              Color             secondColor;
-    private              Color             textColor;
-    private              String            subText;
-    private              boolean           isNight;
-    private              List<Double>      deltas;
-    private              double            deltaMin;
-    private              double            deltaMax;
+    private static final NetworkMonitor  networkMonitor = NetworkMonitor.INSTANCE;
+    private              double          size;
+    private              double          center;
+    private              Pane            pane;
+    private              Canvas          backgroundCanvas;
+    private              GraphicsContext backgroundCtx;
+    private              Canvas          foregroundCanvas;
+    private              GraphicsContext foregroundCtx;
+    private              Canvas          hoursCanvas;
+    private              GraphicsContext hoursCtx;
+    private              Canvas          minutesCanvas;
+    private              GraphicsContext minutesCtx;
+    private              Canvas          secondsCanvas;
+    private              GraphicsContext secondsCtx;
+    private              Color           tickBackgroundColor;
+    private              Color           backgroundColor;
+    private              Color           hourColor;
+    private              Color           minuteColor;
+    private              Color           fiveMinuteColor;
+    private              Color           secondColor;
+    private              Color           textColor;
+    private              String          subText;
+    private              boolean         isNight;
+    private              List<Double>    deltas;
+    private              double          deltaMin;
+    private              double          deltaMax;
 
 
     // ******************** Constructors **************************************
@@ -155,7 +156,13 @@ public class GlucoPiDigitalSkin extends ClockSkinBase {
     private void drawForeground(final ZonedDateTime TIME) {
         foregroundCtx.clearRect(0, 0, size, size);
 
-        if (clock.isTextVisible()) {
+        if (networkMonitor.isOffline()) {
+            foregroundCtx.setFill(Color.WHITE);
+            foregroundCtx.setTextBaseline(VPos.CENTER);
+            foregroundCtx.setTextAlign(TextAlignment.CENTER);
+            foregroundCtx.setFont(Fonts.sfProRoundedBold(size * 0.1));
+            foregroundCtx.fillText("O F F L I N E", center, center);
+        } else if (clock.isTextVisible()) {
             foregroundCtx.setFill(textColor);
             foregroundCtx.setTextBaseline(VPos.CENTER);
             foregroundCtx.setTextAlign(TextAlignment.CENTER);
