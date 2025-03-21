@@ -6,8 +6,6 @@ module eu.hansolo.fx.glucopi {
     requires transitive javafx.base;
     requires transitive javafx.graphics;
     requires transitive javafx.controls;
-    requires transitive javafx.swing;
-    requires transitive javafx.fxml;
 
     // 3rd Party
     requires transitive eu.hansolo.toolboxfx;

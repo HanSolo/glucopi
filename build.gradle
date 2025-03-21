@@ -20,7 +20,6 @@ plugins {
     id 'com.google.osdetector'           version '1.7.3'
     id 'org.javamodularity.moduleplugin' version '1.8.15'
     id 'net.nemerosa.versioning'         version '3.1.0'
-    id 'org.cyclonedx.bom'               version '1.10.0'
 }
 
 apply plugin: 'signing'
@@ -60,12 +59,9 @@ dependencies {
     implementation 'eu.hansolo:nightscoutconnector:21.0.5'
     implementation 'com.google.code.gson:gson:2.11.0'
     implementation 'com.google.gradle:osdetector-gradle-plugin:1.7.3'
-    implementation 'com.itextpdf:itext-core:8.0.4'
     implementation "org.openjfx:javafx-base:${javafxVersion}:${platform}"
     implementation "org.openjfx:javafx-graphics:${javafxVersion}:${platform}"
     implementation "org.openjfx:javafx-controls:${javafxVersion}:${platform}"
-    implementation "org.openjfx:javafx-swing:${javafxVersion}:${platform}"
-    implementation "org.openjfx:javafx-fxml:${javafxVersion}:${platform}"
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.3'
 }
 
@@ -149,22 +145,6 @@ run {
         classpath = files()
     }
 }
-
-
-// Create SBOM of ICClient with every build and store it in build/reports
-build.finalizedBy('cyclonedxBom')
-cyclonedxBom {
-    includeConfigs         = ["runtimeClasspath"]
-    skipConfigs            = ["compileClasspath", "testCompileClasspath"]
-    projectType            = "application"
-    schemaVersion          = "1.5"
-    destination            = file("build/reports")
-    outputName             = "CycloneDX-Sbom"
-    outputFormat           = "all"
-    includeBomSerialNumber = true
-    componentVersion       = project.version.toString()
-}
-
 
 // PreView
 tasks.withType(JavaCompile) {
