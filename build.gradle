@@ -146,7 +146,7 @@ run {
     }
 }
 
-// PreView
+/* PreView
 tasks.withType(JavaCompile) {
     options.compilerArgs += "--enable-preview"
 }
@@ -156,3 +156,4 @@ tasks.withType(Test) {
 tasks.withType(JavaExec) {
     jvmArgs += "--enable-preview"
 }
+*/
