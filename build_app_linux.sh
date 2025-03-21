@@ -80,7 +80,7 @@ do
   --name GlucoPi \
   --main-class eu.hansolo.fx.glucopi.Launcher \
   --main-jar ${MAIN_JAR} \
-  --java-options -Xmx2048m \
+  --java-options -Xmx382m \
   --java-options '--enable-preview' \
   --java-options '-Djdk.gtk.verbose=true' \
   --java-options '-Djdk.gtk.version=3' \
